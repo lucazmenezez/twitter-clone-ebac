@@ -35,3 +35,14 @@ class CommentPostView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         post_id = self.kwargs['post_id']
         serializer.save(author=self.request.user, post_id=post_id)
+
+class FeedView(generics.ListAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        # pega todos os usuários que o usuário atual segue
+        following_users = user.following.all()
+        # filtra posts desses usuários
+        return Post.objects.filter(author__in=following_users).order_by('-created_at')
