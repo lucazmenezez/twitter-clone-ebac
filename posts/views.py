@@ -18,7 +18,10 @@ class LikePostView(generics.CreateAPIView):
     serializer_class = LikeSerializer
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        post_id = self.request.data.get('post')
+        like, created = Like.objects.get_or_create(post_id=post_id, user=self.request.user)
+        if not created:
+            like.delete()  # descurtir se já tiver
 
 # Comentar post
 class CommentPostView(generics.ListCreateAPIView):
