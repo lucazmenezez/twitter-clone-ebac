@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Feed{% endblock %}
+{% block content %}
+<h2 class="mb-4">Feed</h2>
+
+<div class="card-form mb-4">
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="content" class="form-control" placeholder="O que você está pensando?" rows="3"></textarea>
+        <button type="submit" class="btn btn-primary mt-3 w-100">Postar</button>
+    </form>
+</div>
+
+{% for post in posts %}
+<div class="card post-card mb-3 p-3">
+    <h5>@<a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a></h5>
+    <p>{{ post.content }}</p>
+    <small class="text-muted">{{ post.created_at|date:"d/m/Y H:i" }}</small>
+</div>
+{% empty %}
+<p>Nenhum post ainda.</p>
+{% endfor %}
+{% endblock %}

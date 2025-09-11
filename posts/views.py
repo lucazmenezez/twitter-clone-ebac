@@ -2,6 +2,8 @@ from rest_framework import generics, permissions
 from rest_framework.response import Response
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, CommentSerializer, LikeSerializer
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 
 # Posts
 class PostListCreateView(generics.ListCreateAPIView):
@@ -46,3 +48,17 @@ class FeedView(generics.ListAPIView):
         following_users = user.following.all()
         # filtra posts desses usuários
         return Post.objects.filter(author__in=following_users).order_by('-created_at')
+    
+@login_required
+def feed_view(request):
+    if request.method == "POST":
+        content = request.POST.get("content")
+        if content:
+            Post.objects.create(author=request.user, content=content)
+            return redirect("feed")  # evita repostar ao dar refresh
+
+    # pega posts do usuário logado + dos que ele segue
+    following_users = request.user.following.values_list("id", flat=True)
+    posts = Post.objects.filter(author__in=list(following_users) + [request.user.id]).order_by("-created_at")
+
+    return render(request, "feed.html", {"posts": posts})

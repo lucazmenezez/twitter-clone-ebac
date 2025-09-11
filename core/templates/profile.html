@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Perfil de {{ profile_user.username }}{% endblock %}
+
+{% block content %}
+<div class="card mb-4">
+    <div class="card-body d-flex align-items-center">
+        {% if profile_user.profile_image %}
+            <img src="{{ profile_user.profile_image.url }}" alt="Avatar" class="rounded-circle me-3" width="80" height="80">
+        {% else %}
+            <div class="bg-secondary rounded-circle me-3" style="width: 80px; height: 80px;"></div>
+        {% endif %}
+        <div>
+            <h3 class="card-title mb-1">{{ profile_user.username }}</h3>
+            {% if profile_user.bio %}
+                <p class="card-text">{{ profile_user.bio }}</p>
+            {% endif %}
+            <div class="d-flex gap-3">
+                <span><strong>{{ followers_count }}</strong> Seguidores</span>
+                <span><strong>{{ following_count }}</strong> Seguindo</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if request.user != profile_user %}
+    <form method="post" action="{% url 'follow-toggle' profile_user.id %}">
+        {% csrf_token %}
+        {% if profile_user in request.user.following.all %}
+            <button type="submit" class="btn btn-outline-danger">Deixar de seguir</button>
+        {% else %}
+            <button type="submit" class="btn btn-outline-primary">Seguir</button>
+        {% endif %}
+    </form>
+{% endif %}
+
+<!-- Aqui você pode adicionar outras seções, como posts do usuário, etc. -->
+{% endblock %}

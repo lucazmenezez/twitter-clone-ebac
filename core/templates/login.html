@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="card-title text-center mb-4">Login</h2>
+
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        Usuário ou senha inválidos.
+                    </div>
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                </form>
+
+                <p class="text-center mt-3">
+                    Não tem conta? <a href="{% url 'register' %}">Registre-se</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
