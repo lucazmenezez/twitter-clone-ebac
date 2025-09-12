@@ -5,6 +5,7 @@ from users import views as user_views
 from django.contrib.auth import views as auth_views
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic import RedirectView  # <--- import necessário
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -17,8 +18,13 @@ urlpatterns = [
     # feed + perfil
     path("feed/", feed_view, name="feed"),
     path("profile/<str:username>/", user_views.profile_view, name="profile"),
-    path('', include('users.urls')),
+
+    # redirecionar raiz para login
+    path("", RedirectView.as_view(url="/login/", permanent=False)),
+
+    # incluir urls dos apps
     path('posts/', include('posts.urls')),
+    path('users/', include('users.urls')),
 ]
 
 if settings.DEBUG:
