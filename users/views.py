@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
-from .forms import CustomUserCreationForm
+from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import CustomUser
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from .forms import CustomUserCreationForm, UserUpdateForm, CustomPasswordChangeForm
+from .models import CustomUser
+
 
 # Registro
 def register_view(request):
@@ -21,12 +23,13 @@ def register_view(request):
         form = CustomUserCreationForm()
     return render(request, "register.html", {"form": form})
 
+
 # Perfil
 def profile_view(request, username):
     profile_user = get_object_or_404(CustomUser, username=username)
-    
-    followers_count = profile_user.followers.count()  # quem segue este usuário
-    following_count = profile_user.following.count()  # quem ele segue
+
+    followers_count = profile_user.followers.count()
+    following_count = profile_user.following.count()
 
     context = {
         "profile_user": profile_user,
@@ -34,6 +37,7 @@ def profile_view(request, username):
         "following_count": following_count,
     }
     return render(request, "profile.html", context)
+
 
 # Seguir / deixar de seguir
 @login_required
@@ -46,17 +50,46 @@ def follow_toggle(request, id):
             current_user.following.remove(user_to_follow)
         else:
             current_user.following.add(user_to_follow)
-        current_user.save()
-    
+
     return redirect('profile', username=user_to_follow.username)
+
 
 class UsersListView(LoginRequiredMixin, ListView):
     model = CustomUser
     template_name = "users_list.html"
     context_object_name = "users"
 
-# Lista de usuários para seguir
+
 @login_required
 def users_list(request):
     users = CustomUser.objects.exclude(id=request.user.id)
     return render(request, "users_list.html", {"users": users})
+
+
+@login_required
+def edit_profile(request):
+    if request.method == "POST":
+        form = UserUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Perfil atualizado com sucesso!")
+            return redirect("profile", username=request.user.username)
+    else:
+        form = UserUpdateForm(instance=request.user)
+
+    return render(request, "users/edit_profile.html", {"form": form})
+
+
+@login_required
+def change_password(request):
+    if request.method == "POST":
+        form = CustomPasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # mantém logado
+            messages.success(request, "Senha alterada com sucesso!")
+            return redirect("profile", username=request.user.username)
+    else:
+        form = CustomPasswordChangeForm(request.user)
+
+    return render(request, "users/change_password.html", {"form": form})

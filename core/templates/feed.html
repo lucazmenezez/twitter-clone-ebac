@@ -3,6 +3,7 @@
 {% block content %}
 <h2 class="mb-4">Feed</h2>
 
+<!-- Formulário de novo post -->
 <div class="card-form mb-4">
     <form method="post">
         {% csrf_token %}
@@ -11,13 +12,68 @@
     </form>
 </div>
 
-{% for post in posts %}
-<div class="card post-card mb-3 p-3">
-    <h5>@<a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a></h5>
-    <p>{{ post.content }}</p>
-    <small class="text-muted">{{ post.created_at|date:"d/m/Y H:i" }}</small>
+<div class="row">
+  <div class="col-12">
+    <!-- Posts -->
+    {% for post in posts %}
+    <div class="card post-card mb-3 p-3">
+        <div class="d-flex justify-content-between align-items-start">
+            <div>
+                <h5 class="mb-1">@<a href="{% url 'profile' post.author.username %}">{{ post.author.username }}</a></h5>
+                <small class="text-muted">{{ post.created_at|date:"d/m/Y H:i" }}</small>
+            </div>
+            <div class="text-end">
+                <!-- se quiser pegar botão de seguir aqui, pode -->
+            </div>
+        </div>
+
+        <p class="mt-2">{{ post.content }}</p>
+
+        <div class="mt-2 d-flex flex-wrap gap-2">
+            <!-- Likes (front-end HTML) -->
+            <form method="post" action="{% url 'like-post-html' post.id %}" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-sm btn-outline-primary">
+                    👍 Curtir ({{ post.total_likes }})
+                </button>
+            </form>
+
+            <!-- Comentários toggle -->
+            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#comments-{{ post.id }}">
+                💬 Comentários ({{ post.total_comments }})
+            </button>
+        </div>
+
+        <!-- área de comentários (collapse) -->
+        <div class="collapse mt-3" id="comments-{{ post.id }}">
+            <div class="card card-body">
+                <div class="comments-list mb-2">
+                    {% for comment in post.comments.all %}
+                        <div class="mb-2">
+                            <strong>@{{ comment.author.username }}</strong>
+                            <p class="mb-1">{{ comment.content }}</p>
+                            <small class="text-muted">{{ comment.created_at|date:"d/m/Y H:i" }}</small>
+                            <hr class="my-2">
+                        </div>
+                    {% empty %}
+                        <p class="text-muted mb-2">Sem comentários ainda.</p>
+                    {% endfor %}
+                </div>
+
+                <!-- Formulário de comentário -->
+                <form method="post" action="{% url 'comment-post-html' post.id %}">
+                    {% csrf_token %}
+                    <textarea name="content" rows="2" class="form-control" placeholder="Escreva um comentário..." required></textarea>
+                    <button type="submit" class="btn btn-sm btn-primary mt-2">Comentar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if not posts %}
+        <p>Nenhum post ainda.</p>
+    {% endif %}
+    </div>
 </div>
-{% empty %}
-<p>Nenhum post ainda.</p>
-{% endfor %}
 {% endblock %}

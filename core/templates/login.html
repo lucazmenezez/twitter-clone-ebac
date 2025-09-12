@@ -4,28 +4,71 @@
 
 {% block content %}
 <div class="row justify-content-center mt-5">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shadow-lg">
+            <div class="card-body p-5">
                 <h2 class="card-title text-center mb-4">Login</h2>
 
                 {% if form.errors %}
-                    <div class="alert alert-danger">
+                    <div class="alert alert-danger text-center">
                         Usuário ou senha inválidos.
                     </div>
                 {% endif %}
 
                 <form method="post">
                     {% csrf_token %}
-                    {{ form.as_p }}
-                    <button type="submit" class="btn btn-primary w-100">Entrar</button>
+
+                    {% for field in form %}
+                        <div class="mb-4">
+                            {{ field.label_tag }}
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="text-danger small mt-1">
+                                    {% for error in field.errors %}
+                                        {{ error }}<br>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <button type="submit" class="btn btn-primary w-100 py-2">Entrar</button>
                 </form>
 
-                <p class="text-center mt-3">
+                <p class="text-center mt-4 mb-0">
                     Não tem conta? <a href="{% url 'register' %}">Registre-se</a>
                 </p>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .card {
+        border-radius: 1rem;
+        background-color: #fff;
+    }
+    .card-body {
+        padding: 3rem 2rem;
+    }
+    input, select, textarea {
+        border-radius: 0.5rem;
+        padding: 0.65rem 0.75rem;
+        font-size: 0.95rem;
+        width: 100%;
+        border: 1px solid #ced4da;
+    }
+    .card-title {
+        font-weight: 600;
+        font-size: 1.7rem;
+    }
+    .btn-primary {
+        font-size: 1rem;
+        font-weight: 500;
+        border-radius: 0.6rem;
+    }
+    .text-danger {
+        font-size: 0.85rem;
+    }
+</style>
 {% endblock %}

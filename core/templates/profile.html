@@ -6,7 +6,7 @@
 <div class="card mb-4">
     <div class="card-body d-flex align-items-center">
         {% if profile_user.profile_image %}
-            <img src="{{ profile_user.profile_image.url }}" alt="Avatar" class="rounded-circle me-3" width="80" height="80">
+            <img src="{{ profile_user.profile_image.url }}" alt="Avatar" class="profile-img rounded-circle me-3" width="80" height="80">
         {% else %}
             <div class="bg-secondary rounded-circle me-3" style="width: 80px; height: 80px;"></div>
         {% endif %}
@@ -34,5 +34,8 @@
     </form>
 {% endif %}
 
-<!-- Aqui você pode adicionar outras seções, como posts do usuário, etc. -->
+{% if request.user == profile_user %}
+    <a href="{% url 'edit-profile' %}" class="btn btn-sm btn-outline-primary mt-3">Editar Perfil</a>
+    <a href="{% url 'change-password' %}" class="btn btn-sm btn-outline-secondary mt-3">Alterar Senha</a>
+{% endif %}
 {% endblock %}

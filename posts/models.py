@@ -9,6 +9,15 @@ class Post(models.Model):
     def __str__(self):
         return f'{self.author.username} - {self.content[:30]}'
 
+    @property
+    def total_likes(self):
+        return self.likes.count()
+
+    @property
+    def total_comments(self):
+        return self.comments.count()
+
+
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
@@ -17,6 +26,7 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comentário de {self.author.username}'
+
 
 class Like(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
