@@ -16,7 +16,7 @@ SECRET_KEY = "django-insecure-%agujvm!5il(()gt(@4epxqwk31ho3i3%#le+gr8iwrl)o)$e5
 DEBUG = False
 
 # Adicione seu domínio do PythonAnywhere
-ALLOWED_HOSTS = ['seu_usuario.pythonanywhere.com']
+ALLOWED_HOSTS = ['lucasDLmenezes.pythonanywhere.com']
 
 
 # Application definition
