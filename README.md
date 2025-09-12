@@ -1,6 +1,6 @@
 # Twitter Clone - Projeto Django
 
-Um clone simplificado do Twitter, desenvolvido em **Django**, com funcionalidades de registro, login, e postagens básicas.  
+Um clone simplificado do Twitter, desenvolvido em **Django**, com funcionalidades de registro, login, postagens básicas, curtidas e comentários, funcionalidades de seguir e seguidores, perfil, editar perfil, com foto, feed de postagens, lista de usuários.
 
 ## 🛠 Tecnologias Utilizadas
 - Python 3.13  
@@ -21,9 +21,10 @@ Antes de rodar o projeto localmente, você precisará ter instalado:
 ---
 
 ## 🚀 Como rodar localmente
+```bash
 
 1. **Clonar o repositório**
-```bash
+
 git clone https://github.com/seu-usuario/twitter-clone.git
 cd twitter-clone
 
